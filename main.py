@@ -25,11 +25,11 @@ class Blog(db.Model):
     body = db.TextProperty(required = True)
     created = db.DateTimeProperty(auto_now_add = True)
 
-
 class MainPage(Handler):
-    def get(self, title="", body="", error=""):
-        blogs = db.GqlQuery("SELECT * FROM Blog"
-                            "ORDER BY created DESC LIMIT 10")
+    def get(self, title="", body="", error="", blog_id=""):
+
+
+        blogs = db.GqlQuery("SELECT * FROM Blog ORDER BY created DESC limit 5")
         self.render("frontpage.html", title = title, body = body, error = error, blogs=blogs)
 
 class NewPost(Handler):
@@ -46,14 +46,33 @@ class NewPost(Handler):
         if title and body:
             b = Blog(title = title, body = body)
             b.put()
+            blog_id = str(b.key().id())
+            self.redirect("/blog"+"/"+blog_id)
+            #self.response.write(title)
 
-            self.redirect("/blog")
+            #self.response.write(body)
+
+            #self.redirect("/blog")
         else:
             error = "We need both a Title and a Body to the Blog Post"
             self.render_newpost(title, body, error)
 
+class ViewPostHandler(webapp2.RequestHandler):
+    def get(self, id):
+
+        #watched_movie_id = self.request.get("watched-movie")
+        #watched_movie = Movie.get_by_id(watched_movie_id)
+        blog_id = id
+        id = Blog.get_by_id(int(blog_id))
+        #self.response.write(id)
+        #Blog.get_by_id(id)
+        if id:
+            self.response.write(id)
+        else:
+            error = "This is not a valid ID, please try again"
 
 app = webapp2.WSGIApplication([
     ('/blog', MainPage),
-    ('/newpost', NewPost)
+    ('/newpost', NewPost),
+    webapp2.Route('/blog/<id:\d+>', ViewPostHandler)
 ], debug=True)

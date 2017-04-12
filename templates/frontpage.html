@@ -6,7 +6,7 @@
 
 {% for blog in blogs %}
     <div class="blog">
-        <div class="blog-title">{{blog.title}}</div>
+        <div class="blog-title"><a href="/blog/{{blog.key().id()}}">{{blog.title}}</a></div>
         <pre class="blog-body">{{blog.body}}</pre>
     </div>
 {% endfor %}
