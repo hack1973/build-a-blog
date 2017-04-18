@@ -49,11 +49,7 @@ class NewPost(Handler):
             b.put()
             blog_id = str(b.key().id())
             self.redirect("/blog"+"/"+blog_id)
-            #self.response.write(title)
 
-            #self.response.write(body)
-
-            #self.redirect("/blog")
         else:
             error = "We need both a Title and a Body to the Blog Post"
             self.render_newpost(title, body, error)
@@ -61,19 +57,10 @@ class NewPost(Handler):
 class ViewPostHandler(Handler):
     def get(self, blog_id = "", title = "", body = "", error = ""):
 
-        #b = Blog(title = title, body = body)
-        #b.put()
-        #blog_id = str(b.key().id())
-        #blog_id = id
         post = Blog.get_by_id(int(blog_id))
-        #title = b.key(title).id(blog_id))
-        #body = b.key(body).id(blog_id))
-        #self.response.write(id)
-        #Blog.get_by_id(id)
+
         if post:
-            #self.response.write(blog_id)
-            #permalink_blog_post = Blog.all()
-            self.render("permalink.html", title = post.title, body = post.body, blog_id = blog_id, error = error)
+            self.render("permalink.html", title = post.title , body = post.body, blog_id = blog_id, error = error)
 
         else:
             error = "This is not a valid ID, please try again"
