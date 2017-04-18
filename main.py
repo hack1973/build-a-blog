@@ -24,6 +24,7 @@ class Blog(db.Model):
     title = db.StringProperty(required = True)
     body = db.TextProperty(required = True)
     created = db.DateTimeProperty(auto_now_add = True)
+    #last_modified =dbDateTimeProperty(auto_now = True)
 
 class MainPage(Handler):
     def get(self, title="", body="", error="", blog_id=""):
@@ -57,22 +58,29 @@ class NewPost(Handler):
             error = "We need both a Title and a Body to the Blog Post"
             self.render_newpost(title, body, error)
 
-class ViewPostHandler(webapp2.RequestHandler):
-    def get(self, id):
+class ViewPostHandler(Handler):
+    def get(self, blog_id = "", title = "", body = "", error = ""):
 
-        #watched_movie_id = self.request.get("watched-movie")
-        #watched_movie = Movie.get_by_id(watched_movie_id)
-        blog_id = id
-        id = Blog.get_by_id(int(blog_id))
+        #b = Blog(title = title, body = body)
+        #b.put()
+        #blog_id = str(b.key().id())
+        #blog_id = id
+        post = Blog.get_by_id(int(blog_id))
+        #title = b.key(title).id(blog_id))
+        #body = b.key(body).id(blog_id))
         #self.response.write(id)
         #Blog.get_by_id(id)
-        if id:
-            self.response.write(id)
+        if post:
+            #self.response.write(blog_id)
+            #permalink_blog_post = Blog.all()
+            self.render("permalink.html", title = post.title, body = post.body, blog_id = blog_id, error = error)
+
         else:
             error = "This is not a valid ID, please try again"
+            self.render("permalink.html", title = title, body = body, blog_id = blog_id, error = error)
 
 app = webapp2.WSGIApplication([
-    ('/blog', MainPage),
-    ('/newpost', NewPost),
-    webapp2.Route('/blog/<id:\d+>', ViewPostHandler)
-], debug=True)
+    ('/blog/?', MainPage),
+    ('/blog/newpost', NewPost),
+    ('/blog/([0-9]+)', ViewPostHandler)
+    ], debug=True)
